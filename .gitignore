@@ -33,6 +33,7 @@
 
 # Removing build folder
 /build
+/release
 
 # Removing .cache (clangd)
 .cache
