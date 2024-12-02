@@ -18,9 +18,6 @@ main() {
     const auto distance{ total_distance( id_pair ) };
     std::cout << std::format( "distance: {}.\n", distance );
 
-    for ( const auto [l, r] : std::views::zip( id_pair.first, id_pair.second ) )
-        std::cout << l << "\t" << r << std::endl;
-
     const auto score{ similarity_score( id_pair ) };
     std::cout << std::format( "similarity score: {}.\n", score );
 }

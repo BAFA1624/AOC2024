@@ -33,7 +33,7 @@ similarity_score( std::pair<std::vector<std::int64_t>,
     auto & [left_ids, right_ids] = sorted_data;
 
     std::map<std::int64_t, std::pair<std::int64_t, std::int64_t>> id_list_count;
-    for ( const auto key : left_ids ) {
+    for ( const auto & key : left_ids ) {
         if ( id_list_count.contains( key ) )
             id_list_count[key].first++;
         else
@@ -44,28 +44,16 @@ similarity_score( std::pair<std::vector<std::int64_t>,
     // ids are sorted -> new key when right_ids[rpos] > key
     std::size_t rpos{ 0 };
     for ( const auto & key : id_list_count | std::views::keys ) {
-        std::cout << std::format( "Scanning key: {}\n", key );
-        while ( right_ids[rpos] <= key ) {
+        while ( right_ids[rpos] <= key && rpos < right_ids.size() ) {
             if ( right_ids[rpos] == key ) {
                 id_list_count[key].second++;
-                std::cout << std::format( "\tcount: {}\n",
-                                          id_list_count[key].second );
             }
             rpos++;
         }
-
-        // if ( id_list_count[key].second == 0 ) {
-        //     std::cout << std::format( "No instances found in rlist: {}\n",
-        //                               key );
-        //     id_list_count[key].first = 0;
-        // }
     }
 
     std::int64_t similarity_score{ 0 };
-    for ( const auto [key, occurences] : id_list_count ) {
-        std::cout << std::format( "{} * {} * {} -> {}\n", key, occurences.first,
-                                  occurences.second,
-                                  key * occurences.first * occurences.second );
+    for ( const auto & [key, occurences] : id_list_count ) {
         similarity_score += ( key * occurences.first * occurences.second );
     }
 
