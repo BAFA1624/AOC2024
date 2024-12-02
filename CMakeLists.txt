@@ -20,12 +20,3 @@ include_directories(~/include)
 
 add_subdirectory(src)
 add_subdirectory(tests)
-
-add_executable(main src/main.cpp src/day1.cpp)
-add_custom_command(
-    TARGET main POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json ${CMAKE_SOURCE_DIR}/compile_commands.json
-    COMMENT "Transferring compile_commands.json..."
-)
-
-target_link_libraries(main PRIVATE ${LINK_LIBS})
