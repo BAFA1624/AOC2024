@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -pedantic -O0 -ggdb -Wconversion -fsanitize=address")
+set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -pedantic -O0 -ggdb -Wconversion")
 set(CMAKE_CXX_FLAGS_RELEASE "-Wall -Wextra -pedantic -O3 -ggdb -Wconversion")
 
 include_directories(./include)
