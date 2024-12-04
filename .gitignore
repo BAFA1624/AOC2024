@@ -40,3 +40,6 @@
 
 # Removing compile commands
 compile_commands.json
+
+# Ignore all swap files
+*.swp
