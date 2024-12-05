@@ -13,7 +13,7 @@ main() {
     const auto test_input{ base_path / "tests" / "sources" / "day_2.txt" };
 
     const auto safety_reports{ parse_input(
-        std::filesystem::directory_entry{ input } ) };
+        std::filesystem::directory_entry{ test_input } ) };
 
     const auto safety_levels{ check_reports( safety_reports ) };
 
