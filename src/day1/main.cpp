@@ -3,9 +3,7 @@
 
 int
 main() {
-    const std::filesystem::path base_path{
-        "/Users/ben/Documents/gitrepos.nosync/AOC2024/"
-    };
+    const std::filesystem::path base_path{ ".." };
 
     const std::string           delim{ "   " };
     const std::filesystem::path input{ base_path / "src" / "input"

@@ -22,9 +22,10 @@ parse_input( const std::filesystem::directory_entry & input_file ) {
     const auto file_sz{ file_stream.tellg() };
     file_stream.seekg( file_stream.beg );
 
-    std::string file_data( static_cast<std::uint64_t>( file_sz ), '\0' );
+    std::string file_data( static_cast<std::size_t>( file_sz ), '\0' );
 
-    if ( !file_stream.read( file_data.data(), file_data.size() ) ) {
+    if ( !file_stream.read( file_data.data(),
+                            static_cast<std::int64_t>( file_data.size() ) ) ) {
         std::cerr << std::format( "Unable to read {}.\n",
                                   input_file.path().string() );
         exit( EXIT_FAILURE );
