@@ -41,9 +41,9 @@ parse_input( const std::filesystem::path & file_path ) {
     return file_data;
 }
 
-std::pair<std::int64_t, std::int64_t>
+std::pair<std::uint64_t, std::uint64_t>
 find_width_height( const std::string_view word_search ) {
-    const auto height{ static_cast<std::int64_t>(
+    const auto height{ static_cast<std::uint64_t>(
         std::count_if( word_search.cbegin(), word_search.cend(),
                        []( const char c ) { return c == '\n'; } ) ) };
     if ( height == 0 ) {
@@ -51,48 +51,49 @@ find_width_height( const std::string_view word_search ) {
         exit( EXIT_FAILURE );
     }
 
-    if ( static_cast<std::int64_t>( word_search.size() ) % height != 0 ) {
+    if ( word_search.size() % height != 0 ) {
         std::cerr << std::format(
             "Invalid word search. All rows must be the same length.\n" );
         exit( EXIT_FAILURE );
     }
 
     // - height to remove newline characters
-    const auto width{ static_cast<std::int64_t>(
-        ( static_cast<std::int64_t>( word_search.size() ) - height )
-        / height ) };
+    const auto width{ static_cast<std::uint64_t>(
+        ( word_search.size() - height ) / height ) };
 
     return std::make_pair( width, height );
 }
 
 std::uint64_t
-coord_2_index( const std::int64_t                  width,
-               [[maybe_unused]] const std::int64_t height, const std::int64_t i,
-               const std::int64_t j ) {
+coord_2_index( const std::uint64_t                  width,
+               [[maybe_unused]] const std::uint64_t height,
+               const std::uint64_t i, const std::uint64_t j ) {
     // width + 1 to account for newlines
-    return static_cast<std::uint64_t>( j * ( width + 1 ) + i );
+    return j * ( width + 1 ) + i;
 }
 
-std::pair<std::int64_t, std::int64_t>
-index_2_coord( const std::int64_t                  width,
-               [[maybe_unused]] const std::int64_t height,
-               const std::uint64_t                 idx ) {
-    return { static_cast<std::int64_t>( idx ) % ( width + 1 ),
-             static_cast<std::int64_t>( idx ) / ( width + 1 ) };
+std::pair<std::uint64_t, std::uint64_t>
+index_2_coord( const std::uint64_t                  width,
+               [[maybe_unused]] const std::uint64_t height,
+               const std::uint64_t                  idx ) {
+    return { idx % ( width + 1 ), idx / ( width + 1 ) };
 }
 
 bool
-check_valid_direction( const std::int64_t width, std::int64_t height,
-                       const direction_t direction, const std::int64_t i,
-                       const std::int64_t j, const std::uint64_t length ) {
+check_valid_direction( const std::uint64_t width, std::uint64_t height,
+                       const direction_t direction, const std::uint64_t i,
+                       const std::uint64_t j, const std::uint64_t length ) {
     const auto mapping{ direction_vectors.at( direction ) };
 
-    for ( std::int64_t n{ 1 }; n < static_cast<std::int64_t>( length ); ++n ) {
-        const auto new_i{ i + n * mapping.first },
-            new_j{ j + n * mapping.second };
+    for ( std::uint64_t n{ 1 }; n < length; ++n ) {
+        const auto new_i{ static_cast<std::int64_t>( i )
+                          + static_cast<std::int64_t>( n ) * mapping.first },
+            new_j{ static_cast<std::int64_t>( j )
+                   + static_cast<std::int64_t>( n ) * mapping.second };
 
         // Check if out of bounds
-        if ( new_i >= width || new_j >= height )
+        if ( new_i >= static_cast<std::int64_t>( width )
+             || new_j >= static_cast<std::int64_t>( height ) )
             return false;
     }
 
@@ -100,18 +101,23 @@ check_valid_direction( const std::int64_t width, std::int64_t height,
 }
 
 std::string
-get_word( const std::string_view word_search, const std::int64_t width,
-          const std::int64_t height, const direction_t direction,
-          const std::int64_t i, const std::int64_t j,
+get_word( const std::string_view word_search, const std::uint64_t width,
+          const std::uint64_t height, const direction_t direction,
+          const std::uint64_t i, const std::uint64_t j,
           const std::uint64_t length ) {
     // Assumes direction is valid
     const auto mapping{ direction_vectors.at( direction ) };
 
     std::string word( length, '\0' );
     for ( std::uint64_t n{ 0 }; n < length; ++n ) {
-        const auto index{ coord_2_index(
-            width, height, i + static_cast<std::int64_t>( n ) * mapping.first,
-            j + static_cast<std::int64_t>( n ) * mapping.second ) };
+        const auto new_i{ static_cast<std::uint64_t>(
+            static_cast<std::int64_t>( i )
+            + static_cast<std::int64_t>( n ) * mapping.first ) },
+            new_j{ static_cast<std::uint64_t>( static_cast<std::int64_t>( j )
+                                               + static_cast<std::int64_t>( n )
+                                                     * mapping.second ) };
+
+        const auto index{ coord_2_index( width, height, new_i, new_j ) };
         word[n] = word_search[index];
     }
 
@@ -134,8 +140,8 @@ search( const std::string_view word_search, const std::string_view keyword ) {
 
     // First pass: Determine positions of all first letters
     std::map<std::uint64_t, direction_mask_t> first_letters;
-    for ( std::int64_t j{ 0 }; j < height; ++j ) {
-        for ( std::int64_t i{ 0 }; i < width; ++i ) {
+    for ( std::uint64_t j{ 0 }; j < height; ++j ) {
+        for ( std::uint64_t i{ 0 }; i < width; ++i ) {
             const auto index{ coord_2_index( width, height, i, j ) };
             if ( word_search[index] == keyword[0] )
                 first_letters[index] = default_mask;
@@ -180,11 +186,7 @@ gen_random_grid( const std::uint64_t width, const std::uint64_t height,
 
     for ( std::uint64_t j{ 0 }; j < height; ++j ) {
         for ( std::uint64_t i{ 0 }; i < width; ++i ) {
-            const auto index{ coord_2_index(
-                static_cast<std::int64_t>( width ),
-                static_cast<std::int64_t>( height ),
-                static_cast<std::int64_t>( i ),
-                static_cast<std::int64_t>( j ) ) };
+            const auto index{ coord_2_index( width, height, i, j ) };
 
             grid[index] =
                 character_set[static_cast<std::size_t>( distrib( gen ) )];
