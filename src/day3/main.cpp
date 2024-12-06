@@ -4,9 +4,7 @@
 
 int
 main() {
-    const std::filesystem::path base_path{
-        "/Users/ben/Documents/gitrepos.nosync/AOC2024"
-    };
+    const std::filesystem::path base_path{ ".." };
 
     const auto test_input{ base_path / "tests" / "sources" / "day_3.txt" };
     const auto input{ base_path / "src" / "input" / "day_3.txt" };

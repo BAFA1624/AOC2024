@@ -12,6 +12,7 @@
 #include <utility>
 
 enum class safety_level { unsafe, safe };
+enum class direction : std::int64_t { down = -1, constant = 0, up = 1 };
 
 std::vector<std::vector<std::int64_t>>
 parse_input( const std::filesystem::directory_entry & file );
