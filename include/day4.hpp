@@ -33,3 +33,6 @@ std::string get_word( const std::string_view word_search,
 std::uint64_t search( const std::string_view word_search,
                       const std::string_view keyword );
 
+std::string gen_random_grid( const std::uint64_t    width,
+                             const std::uint64_t    height,
+                             const std::string_view character_set );

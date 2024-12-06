@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <random>
 
 const std::map<direction_t, std::pair<std::int64_t, std::int64_t>>
     direction_vectors{
@@ -153,11 +154,13 @@ search( const std::string_view word_search, const std::string_view keyword ) {
     std::uint64_t word_count{ 0 };
     for ( const auto & [index, direction_mask] : first_letters ) {
         for ( const auto & [direction, is_valid] : direction_mask ) {
-            const auto [i, j] = index_2_coord( width, height, index );
-            const auto word{ get_word( word_search, width, height, direction, i,
-                                       j, keyword.size() ) };
-            if ( word == keyword )
-                word_count++;
+            if ( is_valid ) {
+                const auto [i, j] = index_2_coord( width, height, index );
+                const auto word{ get_word( word_search, width, height,
+                                           direction, i, j, keyword.size() ) };
+                if ( word == keyword )
+                    word_count++;
+            }
         }
     }
 
@@ -168,5 +171,24 @@ std::string
 gen_random_grid( const std::uint64_t width, const std::uint64_t height,
                  const std::string_view character_set ) {
     std::string grid( ( width + 1 ) * height, '\n' );
+
+    std::random_device              rd;
+    std::mt19937                    gen( rd() );
+    std::uniform_int_distribution<> distrib(
+        0, static_cast<int>( character_set.size() - 1 ) );
+
+    for ( std::uint64_t j{ 0 }; j < height; ++j ) {
+        for ( std::uint64_t i{ 0 }; i < width; ++i ) {
+            const auto index{ coord_2_index(
+                static_cast<std::int64_t>( width ),
+                static_cast<std::int64_t>( height ),
+                static_cast<std::int64_t>( i ),
+                static_cast<std::int64_t>( j ) ) };
+
+            grid[index] =
+                character_set[static_cast<std::size_t>( distrib( gen ) )];
+        }
+    }
+
     return grid;
 }
