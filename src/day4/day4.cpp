@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <random>
 
 const std::map<direction_t, std::pair<std::int64_t, std::int64_t>>
